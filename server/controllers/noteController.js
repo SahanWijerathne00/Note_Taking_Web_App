@@ -1,4 +1,5 @@
 const Note = require("../models/Note");
+const User = require("../models/User");
 
 // CREATE NOTE
 exports.createNote = async (req, res) => {
@@ -87,6 +88,49 @@ exports.deleteNote = async (req, res) => {
     await note.save();
 
     res.json({ message: "Note deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ADD COLLABORATOR
+exports.addCollaborator = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const note = await Note.findById(req.params.id);
+
+    if (!note || note.isDeleted) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Only owner can add collaborators
+    if (note.owner.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only owner can add collaborators" });
+    }
+
+    const userToAdd = await User.findOne({ email });
+
+    if (!userToAdd) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Prevent adding yourself
+    if (userToAdd._id.toString() === note.owner.toString()) {
+      return res.status(400).json({ message: "Owner is already assigned" });
+    }
+
+    // Prevent duplicates
+    if (note.collaborators.includes(userToAdd._id)) {
+      return res.status(400).json({ message: "User already a collaborator" });
+    }
+
+    note.collaborators.push(userToAdd._id);
+    await note.save();
+
+    res.json({ message: "Collaborator added successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
