@@ -38,3 +38,56 @@ exports.getNotes = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// UPDATE NOTE
+exports.updateNote = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+
+    const note = await Note.findById(req.params.id);
+
+    if (!note || note.isDeleted) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Only owner or collaborator can update
+    if (
+      note.owner.toString() !== req.user._id.toString() &&
+      !note.collaborators.includes(req.user._id)
+    ) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    note.title = title || note.title;
+    note.content = content || note.content;
+
+    const updatedNote = await note.save();
+
+    res.json(updatedNote);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// SOFT DELETE NOTE
+exports.deleteNote = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+
+    if (!note || note.isDeleted) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Only owner can delete
+    if (note.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Only owner can delete" });
+    }
+
+    note.isDeleted = true;
+    await note.save();
+
+    res.json({ message: "Note deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
