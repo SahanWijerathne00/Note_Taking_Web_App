@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import NavButtons from "../components/notes/NavButtons";
 import SearchBar from "../components/notes/SearchBar";
 import NoteView from "../components/notes/NoteView";
+import ShareNote from "../components/notes/ShareNote";
 
 import {
   getNotes,
@@ -50,7 +51,7 @@ export default function Dashboard() {
       await fetchNotes();
       setView("all");
       toast.success("Note added successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to add note");
     }
   };
@@ -61,7 +62,7 @@ export default function Dashboard() {
       await fetchNotes();
       setView("all");
       toast.success("Note updated successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Update failed");
     }
   };
@@ -70,9 +71,10 @@ export default function Dashboard() {
     if (!window.confirm("Delete this note?")) return;
     await deleteNote(id, token);
     fetchNotes();
+    toast.success("Note deleted successfully!");
   };
 
-  /* -------- SEARCH & PAGINATION -------- */
+  /* SEARCH & PAGINATION */
   const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -93,33 +95,48 @@ export default function Dashboard() {
   useEffect(() => setCurrentPage(1), [search]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-8">
-      <Header user={user} onLogout={handleLogout} />
-      <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-        <NavButtons setView={setView} />
-        {view === "all" && <SearchBar search={search} setSearch={setSearch} />}
-        {view === "add" && <AddNote onAdd={handleAddNote} />}
-        {view === "edit" && editingNote && (
-          <AddNote onAdd={handleUpdate} existingNote={editingNote} />
-        )}
-        {view === "view" && selectedNote && (
-          <NoteView selectedNote={selectedNote} setView={setView} />
-        )}
-        {view === "all" && (
-          <NotesList
-            notes={notes}
-            currentNotes={currentNotes}
-            setSelectedNote={setSelectedNote}
-            setView={setView}
-            setEditingNote={setEditingNote}
-            handleDelete={handleDelete}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            nextPage={nextPage}
-            prevPage={prevPage}
-            setCurrentPage={setCurrentPage}
-          />
-        )}
+    <div>
+      {/* overlay */}
+      <div className="min-h-screen bg-black/30 backdrop-blur-sm p-4">
+        <Header user={user} onLogout={handleLogout} />
+
+        <div className="max-w-4xl mx-auto bg-white/90 shadow-xl rounded-2xl p-8 border border-gray-200">
+          <NavButtons setView={setView} />
+
+          {view === "all" && (
+            <SearchBar search={search} setSearch={setSearch} />
+          )}
+
+          {view === "add" && <AddNote onAdd={handleAddNote} />}
+
+          {view === "edit" && editingNote && (
+            <AddNote onAdd={handleUpdate} existingNote={editingNote} />
+          )}
+
+          {view === "share" && selectedNote && (
+            <ShareNote note={selectedNote} token={token} setView={setView} />
+          )}
+
+          {view === "view" && selectedNote && (
+            <NoteView selectedNote={selectedNote} setView={setView} />
+          )}
+
+          {view === "all" && (
+            <NotesList
+              notes={notes}
+              currentNotes={currentNotes}
+              setSelectedNote={setSelectedNote}
+              setView={setView}
+              setEditingNote={setEditingNote}
+              handleDelete={handleDelete}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

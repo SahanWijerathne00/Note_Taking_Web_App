@@ -28,3 +28,15 @@ export const deleteNote = async (id, token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+export const shareNote = (noteId, email, token) => {
+  return axios.post(
+    `${API}/${noteId}/collaborators`,
+    { email },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+};

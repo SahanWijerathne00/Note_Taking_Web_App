@@ -30,6 +30,7 @@ exports.getNotes = async (req, res) => {
     };
 
     const notes = await Note.find(query)
+      .populate("collaborators", "name email")
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort({ createdAt: -1 });
