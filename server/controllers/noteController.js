@@ -21,7 +21,7 @@ exports.createNote = async (req, res) => {
 // GET MY NOTES (with search + pagination)
 exports.getNotes = async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 5 } = req.query;
+    const { search = "", page = 1, limit = 100 } = req.query;
 
     const query = {
       isDeleted: false,

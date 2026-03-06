@@ -28,7 +28,7 @@ function Login() {
         formData,
       );
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
 
       toast.success("Login successful ✅");
 
