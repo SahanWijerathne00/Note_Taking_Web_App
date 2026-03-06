@@ -1,1 +1,23 @@
 @import "tailwindcss";
+.btn {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: rgb(212, 235, 129);
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+.ProseMirror {
+  outline: none !important;
+  border: none !important;
+  padding: 10px !important;
+}
+
+.ProseMirror:focus {
+  outline: none !important;
+}

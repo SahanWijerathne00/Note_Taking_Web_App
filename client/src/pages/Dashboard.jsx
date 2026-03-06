@@ -45,17 +45,25 @@ export default function Dashboard() {
   }, []);
 
   const handleAddNote = async (noteData) => {
-    await createNote(noteData, token);
-    fetchNotes();
-    setView("all");
-    toast.success("Note added successfully!");
+    try {
+      await createNote(noteData, token);
+      await fetchNotes();
+      setView("all");
+      toast.success("Note added successfully!");
+    } catch (error) {
+      toast.error("Failed to add note");
+    }
   };
 
   const handleUpdate = async (noteData) => {
-    await updateNote(editingNote._id, noteData, token);
-    fetchNotes();
-    setView("all");
-    toast.success("Note updated successfully!");
+    try {
+      await updateNote(editingNote._id, noteData, token);
+      await fetchNotes();
+      setView("all");
+      toast.success("Note updated successfully!");
+    } catch (error) {
+      toast.error("Update failed");
+    }
   };
 
   const handleDelete = async (id) => {

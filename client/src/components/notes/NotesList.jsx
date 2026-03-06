@@ -36,7 +36,7 @@ export default function NotesList({
                 {note.title}
               </h3>
               <p className="text-gray-600 text-sm mt-2">
-                {note.content.substring(0, 120)}...
+                {note.content.replace(/<[^>]+>/g, "").slice(0, 80)}...
               </p>
             </div>
 
