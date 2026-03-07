@@ -6,9 +6,11 @@ export default function NoteView({ selectedNote, setView }) {
       <h2 className="text-2xl font-bold text-indigo-700">
         {selectedNote.title}
       </h2>
-      <p className="mt-4 text-gray-700 whitespace-pre-line">
-        {selectedNote.content.replace(/<[^>]+>/g, "").slice(0, 80)}...
-      </p>
+
+      <div
+        className="mt-4 text-gray-700"
+        dangerouslySetInnerHTML={{ __html: selectedNote.content }}
+      />
 
       <h3 className="font-semibold mt-4">Collaborators</h3>
 
