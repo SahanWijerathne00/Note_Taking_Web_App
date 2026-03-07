@@ -7,7 +7,7 @@ export default function NoteView({ selectedNote, setView }) {
         {selectedNote.title}
       </h2>
       <p className="mt-4 text-gray-700 whitespace-pre-line">
-        {selectedNote.content}
+        {selectedNote.content.replace(/<[^>]+>/g, "").slice(0, 80)}...
       </p>
 
       <h3 className="font-semibold mt-4">Collaborators</h3>

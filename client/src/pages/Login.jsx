@@ -61,7 +61,7 @@ function Login() {
         <div className="w-full max-w-md">
           {/* APP TITLE OUTSIDE CARD */}
           <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-            Notes Manager
+            Smart Notes Manager
           </h1>
 
           {/* LOGIN CARD */}

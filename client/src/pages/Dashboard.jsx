@@ -28,6 +28,10 @@ export default function Dashboard() {
   const [editingNote, setEditingNote] = useState(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+
   const notesPerPage = 3;
 
   const handleLogout = () => {
@@ -67,11 +71,22 @@ export default function Dashboard() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this note?")) return;
-    await deleteNote(id, token);
+  /* OPEN DELETE MODAL */
+  const handleDelete = (id) => {
+    setNoteToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  /* CONFIRM DELETE */
+  const confirmDelete = async () => {
+    if (!noteToDelete) return;
+
+    await deleteNote(noteToDelete, token);
     fetchNotes();
     toast.success("Note deleted successfully!");
+
+    setShowDeleteModal(false);
+    setNoteToDelete(null);
   };
 
   /* SEARCH & PAGINATION */
@@ -83,6 +98,7 @@ export default function Dashboard() {
 
   const totalPages = Math.ceil(filteredNotes.length / notesPerPage);
   const startIndex = (currentPage - 1) * notesPerPage;
+
   const currentNotes = filteredNotes.slice(
     startIndex,
     startIndex + notesPerPage,
@@ -90,13 +106,15 @@ export default function Dashboard() {
 
   const nextPage = () =>
     currentPage < totalPages && setCurrentPage(currentPage + 1);
+
   const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
-  useEffect(() => setCurrentPage(1), [search]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   return (
     <div>
-      {/* overlay */}
       <div className="min-h-screen bg-black/30 backdrop-blur-sm p-4">
         <Header user={user} onLogout={handleLogout} />
 
@@ -138,6 +156,35 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+            <h3 className="text-lg font-semibold mb-3">Delete Note</h3>
+
+            <p className="text-gray-600 mb-5">
+              Are you sure you want to delete this note?
+            </p>
+
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={confirmDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+              >
+                Delete
+              </button>
+
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
